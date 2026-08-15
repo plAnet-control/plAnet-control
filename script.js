@@ -1,19 +1,10 @@
-// ---------- LOGO FLICKER ----------
-// "PLANET" and "CONTROL" fade independently and semi-randomly, but the
-// constraint below guarantees they are never both fully off at once.
-// The 3D "A" (#aModel) is intentionally never touched here.
+// ---------- LOGO FLICKER (neon-sign style: hard on/off, no fading) ----------
+// "PLANET" and "CONTROL" each flip between fully lit and fully off at random
+// intervals. The constraint below guarantees they're never both off at once.
+// The 3D "A" (#aModel) is intentionally never touched here — it only rotates.
 
 const planetLetters = document.querySelectorAll('.planet-letter');
 const controlLetters = document.querySelectorAll('.control-letter');
-
-const MIN_VISIBLE_OPACITY = 0.06; // "off" threshold
-const FORCE_ON_OPACITY = 0.85;
-
-function randomOpacity() {
-  // Skewed so it spends more time readable than fully dim — feels dreamy, not chaotic.
-  const r = Math.random();
-  return Math.pow(r, 1.6);
-}
 
 function setWordOpacity(letters, value) {
   letters.forEach((el) => {
@@ -21,34 +12,54 @@ function setWordOpacity(letters, value) {
   });
 }
 
-let planetOpacity = 1;
-let controlOpacity = 1;
+let planetOn = true;
+let controlOn = true;
 
-function tickFlicker() {
-  let nextPlanet = randomOpacity();
-  let nextControl = randomOpacity();
+function applyState() {
+  setWordOpacity(planetLetters, planetOn ? 1 : 0);
+  setWordOpacity(controlLetters, controlOn ? 1 : 0);
+}
 
-  // Guarantee: never let both words dip below the "off" threshold together.
-  if (nextPlanet < MIN_VISIBLE_OPACITY && nextControl < MIN_VISIBLE_OPACITY) {
-    if (Math.random() > 0.5) {
-      nextPlanet = FORCE_ON_OPACITY;
+function flipWord(isPlanet) {
+  const turningOn = Math.random() > 0.4; // spends a bit more time lit than dark
+  if (isPlanet) {
+    planetOn = turningOn;
+  } else {
+    controlOn = turningOn;
+  }
+
+  // Hard guarantee: never let both words be off at the same time.
+  if (!planetOn && !controlOn) {
+    if (isPlanet) {
+      controlOn = true;
     } else {
-      nextControl = FORCE_ON_OPACITY;
+      planetOn = true;
     }
   }
 
-  planetOpacity = nextPlanet;
-  controlOpacity = nextControl;
-
-  setWordOpacity(planetLetters, planetOpacity);
-  setWordOpacity(controlLetters, controlOpacity);
-
-  // Irregular timing keeps it feeling organic rather than a metronome.
-  const nextDelay = 900 + Math.random() * 1400;
-  setTimeout(tickFlicker, nextDelay);
+  applyState();
 }
 
-tickFlicker();
+function scheduleFlicker(isPlanet) {
+  // Occasionally stutter a few times fast before settling — real neon tubes do this.
+  if (Math.random() < 0.3) {
+    let count = 0;
+    const stutters = 2 + Math.floor(Math.random() * 3);
+    const stutterInterval = setInterval(() => {
+      flipWord(isPlanet);
+      count += 1;
+      if (count >= stutters) clearInterval(stutterInterval);
+    }, 70 + Math.random() * 60);
+  } else {
+    flipWord(isPlanet);
+  }
+
+  const nextDelay = 900 + Math.random() * 2600;
+  setTimeout(() => scheduleFlicker(isPlanet), nextDelay);
+}
+
+scheduleFlicker(true);
+scheduleFlicker(false);
 
 // ---------- BOTTOM-HOVER "NEXT PAGE" TAB ----------
 const nextTab = document.getElementById('nextTab');
@@ -62,7 +73,6 @@ window.addEventListener('mousemove', (e) => {
   nextTab.classList.toggle('visible', nearBottom);
 });
 
-// Basic touch support: show the tab if the user taps near the bottom
 window.addEventListener('touchstart', (e) => {
   const touch = e.touches[0];
   if (touch && window.innerHeight - touch.clientY < HOVER_ZONE_PX) {
