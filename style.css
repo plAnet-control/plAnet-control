@@ -40,7 +40,7 @@ html, body {
 .haze {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 50% 30%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 60%);
+  background: radial-gradient(circle at 50% 30%, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 60%);
   pointer-events: none;
   z-index: 3;
 }
@@ -50,7 +50,7 @@ html, body {
   position: absolute;
   inset: 0;
   z-index: 1;
-  filter: blur(46px) saturate(0);
+  filter: blur(9px) saturate(0);
   opacity: 0.85;
 }
 
@@ -61,10 +61,12 @@ html, body {
   width: 140%;
   height: 140%;
   animation: driftAcross 90s linear infinite;
+  animation-direction: reverse;
 }
 .cowhide-track-offset {
   left: -140%;
   animation: driftAcross 90s linear infinite;
+  animation-direction: reverse;
 }
 
 @keyframes driftAcross {
@@ -122,18 +124,17 @@ html, body {
 
 .letter {
   display: inline-block;
-  transition: opacity 1.4s ease-in-out, text-shadow 1.4s ease-in-out;
+  transition: opacity 0.03s linear;
   opacity: 1;
 }
 
 /* Slot that hosts the 3D "A" — sits inline with the other letters, never fades */
 .letter-3d {
   display: inline-flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
-  width: 0.82em;
-  height: 1.15em;
-  vertical-align: -0.08em;
+  width: 0.92em;
+  height: 1em;
   opacity: 1 !important;
 }
 #aCanvas {
