@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planet Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HOME PAGE -->
+  <div id="page-home" class="page">
+
+    <!-- drifting cowhide pattern background -->
+    <div class="cowhide-layer" aria-hidden="true">
+      <div class="cowhide-track" id="cowhideTrack">
+        <div class="cowhide-pattern" id="cowhidePatternA"></div>
+        <div class="cowhide-pattern" id="cowhidePatternB"></div>
+      </div>
+    </div>
+
+    <div class="haze"></div>
+
+    <!-- logo -->
+    <div class="logo-wrap">
+      <div class="word planet-word">
+        <span class="letter planet-letter cap-letter">P</span><span class="letter planet-letter">L</span><span
+          id="aModel" class="letter-3d" aria-hidden="true"><canvas id="aCanvas"></canvas></span><span
+          class="letter planet-letter">N</span><span class="letter planet-letter">E</span><span
+          class="letter planet-letter">T</span>
+      </div>
+      <div class="word control-word">
+        <span class="letter control-letter">C</span><span class="letter control-letter">O</span><span
+          class="letter control-letter">N</span><span class="letter control-letter">T</span><span
+          class="letter control-letter">R</span><span class="letter control-letter">O</span><span
+          class="letter control-letter">L</span>
+      </div>
+    </div>
+
+    <!-- next page tab -->
+    <div id="nextTab" class="next-tab">
+      <span class="chevron">&#9660;</span>
+    </div>
+  </div>
+
+  <!-- NEXT PAGE (placeholder — replace with real content) -->
+  <div id="page-next" class="page page-next">
+    <button id="backTab" class="back-tab" aria-label="Back to home">&#9650;</button>
+    <div class="next-content">
+      <p class="next-eyebrow">Page 2</p>
+      <h2>More of Planet Control lives here.</h2>
+      <p class="next-lede">Replace this section with your real content — this is just a placeholder so the slide transition works end to end.</p>
+    </div>
+  </div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module" src="model.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
