@@ -7,25 +7,46 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/home.css">
 </head>
 <body>
 
-  <!-- HOME PAGE -->
-  <div id="page-home" class="page">
-
-    <!-- cycling cowhide pattern background -->
-    <div class="cowhide-layer" aria-hidden="true">
-      <div class="cowhide-img cowhide-img-1"></div>
-      <div class="cowhide-img cowhide-img-2"></div>
+  <!-- shared backdrop -->
+  <div class="scene-bg" aria-hidden="true">
+    <div class="cowhide-layer">
+      <div class="cowhide-strip">
+        <div class="cowhide-img cowhide-img-1"></div>
+        <div class="cowhide-img cowhide-img-2"></div>
+      </div>
     </div>
-
     <div class="haze"></div>
+  </div>
+  <!-- Inline (not js/) and placed immediately after the strip so it runs
+       before first paint — keeps the pan continuous instead of restarting
+       from 0% on every page navigation. See js/page-transition.js for why
+       navigating between pages is a real document load, not a same-page
+       swap. -->
+  <script>
+    (function () {
+      var KEY = 'cowhidePanStart';
+      var start = sessionStorage.getItem(KEY);
+      if (!start) {
+        start = Date.now();
+        sessionStorage.setItem(KEY, start);
+      }
+      var elapsed = Date.now() - start;
+      document.querySelector('.cowhide-strip').style.animationDelay = (-elapsed) + 'ms';
+    })();
+  </script>
+
+  <!-- TITLE PAGE -->
+  <div id="page-home" class="page">
 
     <!-- logo -->
     <div class="logo-wrap">
       <div class="word planet-word">
-        <span class="letter planet-letter cap-letter">P</span><span class="letter planet-letter">L</span><span
+        <span class="letter planet-letter">P</span><span class="letter planet-letter">L</span><span
           id="aModel" class="letter-3d" aria-hidden="true"><canvas id="aCanvas"></canvas></span><span
           class="letter planet-letter">N</span><span class="letter planet-letter">E</span><span
           class="letter planet-letter">T</span>
@@ -38,56 +59,23 @@
       </div>
     </div>
 
-    <!-- next page tab -->
-    <div id="nextTab" class="next-tab">
+    <!-- tab to the product page -->
+    <a id="nextTab" class="next-tab" href="product.html">
       <span class="chevron">&#9660;</span>
-    </div>
-  </div>
-
-  <!-- NEXT PAGE — hoodie designs -->
-  <div id="page-next" class="page page-next">
-
-    <!-- same cycling cowhide pattern background as the home page -->
-    <div class="cowhide-layer" aria-hidden="true">
-      <div class="cowhide-img cowhide-img-1"></div>
-      <div class="cowhide-img cowhide-img-2"></div>
-    </div>
-
-    <div class="haze"></div>
-
-    <button id="backTab" class="back-tab" aria-label="Back to home">&#9650;</button>
-
-    <div class="blob-row">
-      <div class="blob blob-a">
-        <div class="blob-inner">
-          <span class="blob-label">Design 1</span>
-          <!-- Replace the span above with: <img class="blob-img" src="hoodie-1.png" alt="Hoodie design 1"> -->
-        </div>
-      </div>
-      <div class="blob blob-b">
-        <div class="blob-inner">
-          <span class="blob-label">Design 2</span>
-          <!-- Replace the span above with: <img class="blob-img" src="hoodie-2.png" alt="Hoodie design 2"> -->
-        </div>
-      </div>
-      <div class="blob blob-c">
-        <div class="blob-inner">
-          <span class="blob-label">Design 3</span>
-          <!-- Replace the span above with: <img class="blob-img" src="hoodie-3.png" alt="Hoodie design 3"> -->
-        </div>
-      </div>
-    </div>
+    </a>
   </div>
 
   <script type="importmap">
   {
     "imports": {
-      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js",
       "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
     }
   }
   </script>
-  <script type="module" src="model.js"></script>
-  <script src="script.js"></script>
+  <script type="module" src="js/model.js"></script>
+  <script src="js/logo-flicker.js"></script>
+  <script src="js/page-transition.js"></script>
+  <script src="js/home-nav.js"></script>
 </body>
 </html>

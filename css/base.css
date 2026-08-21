@@ -1,0 +1,105 @@
+:root {
+  --fog-1: #efeee9;
+  --fog-2: #ddd9d1;
+  --ink: #171614;
+  --ink-soft: #3a3834;
+  --paper: #f6f5f1;
+  --tab-bg: rgba(23, 22, 20, 0.88);
+  --font-display: 'Gothic A1', 'Helvetica Neue', Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--fog-1);
+  font-family: var(--font-display);
+}
+
+.page {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Shared backdrop for both pages — fixed to the viewport so it never moves
+   with the page transforms, which would otherwise split it into two
+   independently-positioned copies that visibly seam at the transition edge. */
+.scene-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(circle at 50% 35%, var(--fog-1) 0%, var(--fog-2) 100%);
+}
+
+/* Soft overall haze for dreaminess */
+.haze {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 30%, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 60%);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* ---------- COWHIDE BACKGROUND ----------
+   The two images sit side by side (image 1 then image 2) on a strip twice
+   the viewport's width. The strip slides left until image 2 fills the
+   screen, then eases back the way it came — a continuous there-and-back
+   pan across both images rather than a crossfade between them. */
+.cowhide-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  filter: blur(5px) saturate(0);
+  opacity: 0.85;
+}
+
+.cowhide-strip {
+  position: absolute;
+  inset: 0;
+  width: 200%;
+  height: 100%;
+  display: flex;
+  animation: cowhideSlide 30s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.cowhide-img {
+  flex: 0 0 50%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.cowhide-img-1 { background-image: url('../cowhide-1.png'); }
+.cowhide-img-2 { background-image: url('../cowhide-2.png'); }
+
+@keyframes cowhideSlide {
+  0%   { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Shared bob animation — used by both page-tab chevrons (home.css, product.css) */
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cowhide-strip, .chevron, .blob { animation: none !important; }
+}
+
+/* ---------- CROSS-PAGE SLIDE TRANSITION ----------
+   index.html and product.html are separate documents (so each can be
+   edited/live-reloaded independently), so the old same-document CSS slide
+   can't apply directly across a real navigation. It's restored in JS
+   instead — see page-transition.js, which fakes the same transform/timing
+   used here via a fetched overlay, then hands off to a real navigation.
+   (The CSS-only View Transitions API `navigation: auto` approach was tried
+   first but the browser silently skips it on this site's navigations, so
+   it was replaced with the JS version below rather than kept as dead code.) */

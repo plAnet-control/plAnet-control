@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planet Control — Designs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/product.css">
+</head>
+<body>
+
+  <!-- shared backdrop -->
+  <div class="scene-bg" aria-hidden="true">
+    <div class="cowhide-layer">
+      <div class="cowhide-strip">
+        <div class="cowhide-img cowhide-img-1"></div>
+        <div class="cowhide-img cowhide-img-2"></div>
+      </div>
+    </div>
+    <div class="haze"></div>
+  </div>
+  <!-- Inline (not js/) and placed immediately after the strip so it runs
+       before first paint — keeps the pan continuous instead of restarting
+       from 0% on every page navigation. See js/page-transition.js for why
+       navigating between pages is a real document load, not a same-page
+       swap. -->
+  <script>
+    (function () {
+      var KEY = 'cowhidePanStart';
+      var start = sessionStorage.getItem(KEY);
+      if (!start) {
+        start = Date.now();
+        sessionStorage.setItem(KEY, start);
+      }
+      var elapsed = Date.now() - start;
+      document.querySelector('.cowhide-strip').style.animationDelay = (-elapsed) + 'ms';
+    })();
+  </script>
+
+  <!-- BUBBLE PAGE — hoodie designs -->
+  <div id="page-next" class="page page-next">
+
+    <a id="backTab" class="back-tab" href="index.html" aria-label="Back to home">
+      <span class="chevron">&#9650;</span>
+    </a>
+
+    <div class="blob-row">
+      <div class="blob blob-a" tabindex="0" role="button"
+        data-title="Design 1" data-img="hoodie-1.png"
+        data-desc="A bold, minimal hoodie design built around the Planet Control mark. Heavyweight cotton fleece, garment-dyed for a soft worn-in feel.">
+        <div class="blob-inner">
+          <span class="blob-label">Design 1</span>
+          <!-- Replace the span above with: <img class="blob-img" src="hoodie-1.png" alt="Hoodie design 1"> -->
+        </div>
+      </div>
+      <div class="blob blob-b" tabindex="0" role="button"
+        data-title="Design 2" data-img="hoodie-2.png"
+        data-desc="A bold, minimal hoodie design built around the Planet Control mark. Heavyweight cotton fleece, garment-dyed for a soft worn-in feel.">
+        <div class="blob-inner">
+          <span class="blob-label">Design 2</span>
+          <!-- Replace the span above with: <img class="blob-img" src="hoodie-2.png" alt="Hoodie design 2"> -->
+        </div>
+      </div>
+      <div class="blob blob-c" tabindex="0" role="button"
+        data-title="Design 3" data-img="hoodie-3.png"
+        data-desc="A bold, minimal hoodie design built around the Planet Control mark. Heavyweight cotton fleece, garment-dyed for a soft worn-in feel.">
+        <div class="blob-inner">
+          <span class="blob-label">Design 3</span>
+          <!-- Replace the span above with: <img class="blob-img" src="hoodie-3.png" alt="Hoodie design 3"> -->
+        </div>
+      </div>
+    </div>
+
+    <!-- product detail window — opens on top of the blob it was clicked from -->
+    <div id="productModal" class="modal-overlay" aria-hidden="true">
+      <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <button id="modalClose" class="modal-close" aria-label="Close">&times;</button>
+        <div class="modal-media">
+          <span class="modal-media-label" id="modalMediaLabel">Design 1</span>
+          <!-- Replace the span above with: <img class="modal-img" id="modalImg" src="" alt=""> -->
+        </div>
+        <div class="modal-details">
+          <h2 id="modalTitle">Design 1</h2>
+          <p id="modalDesc">Description goes here.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/page-transition.js"></script>
+  <script src="js/product-nav.js"></script>
+  <script src="js/product-modal.js"></script>
+</body>
+</html>

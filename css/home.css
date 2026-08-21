@@ -1,0 +1,129 @@
+/* ---------- TITLE PAGE ---------- */
+#page-home {
+  overflow: hidden;
+}
+
+/* ---------- LOGO ---------- */
+.logo-wrap {
+  position: relative;
+  z-index: 4;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.02em;
+  pointer-events: none;
+}
+
+.word {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+}
+
+.planet-word { font-size: clamp(46px, 9vw, 118px); }
+.control-word { font-size: clamp(30px, 5.8vw, 74px); font-weight: 400; letter-spacing: 0.26em; }
+
+/* Each letter owns its own clipped gradient fill (rather than the whole word
+   sharing one) so its glow — see logo-flicker.js — can flicker per letter.
+   The gradient position is static (no shimmer animation) — animating
+   background-position on 12 separate filtered/clipped elements forever was
+   the main source of the title page's ongoing jank, since every frame forced
+   a fresh blur recompute for each letter's drop-shadow. */
+.letter {
+  display: inline-block;
+  text-transform: lowercase;
+  transition: opacity 0.03s linear;
+  opacity: 1;
+  background: linear-gradient(115deg, #050505 0%, #3c3c3c 20%, #0d0d0d 35%, #4d4d4d 52%, #0a0a0a 68%, #383838 84%, #060606 100%);
+  background-size: 260% 260%;
+  background-position: 40% 50%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.15));
+}
+
+/* Faint silver halo that flickers on/off per letter, neon-tube style.
+   Uses drop-shadow (not text-shadow) so the glow is derived from the
+   letter's actual rendered shape and composites behind it. */
+.letter.glowing {
+  filter:
+    drop-shadow(0 2px 8px rgba(0,0,0,0.15))
+    drop-shadow(0 0 8px rgba(238, 242, 246, 1))
+    drop-shadow(0 0 18px rgba(210, 222, 235, 0.8))
+    drop-shadow(0 0 36px rgba(185, 205, 225, 0.5));
+}
+
+/* Slot that hosts the 3D "A" — sits inline with the other letters, never
+   fades, and carries a permanent (non-flickering) glow to match the halo
+   the other letters flicker through — see logo-flicker.js.
+   The glow is a static radial-gradient layer behind the canvas (::before),
+   not a drop-shadow filter on the canvas itself — the WebGL model repaints
+   every frame, and a filter on top of continuously-changing content forces
+   the browser to re-blur it every single frame forever. A static layer only
+   needs to be composited once. */
+.letter-3d {
+  position: relative;
+  display: inline-flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 0.92em;
+  height: 1em;
+  opacity: 1 !important;
+}
+.letter-3d::before {
+  content: '';
+  position: absolute;
+  inset: -10%;
+  background: radial-gradient(circle,
+    rgba(225, 232, 240, 0.55) 0%,
+    rgba(200, 215, 232, 0.3) 45%,
+    rgba(200, 215, 232, 0) 75%);
+  filter: blur(10px);
+  z-index: -1;
+  pointer-events: none;
+}
+#aCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ---------- NEXT-PAGE TAB ---------- */
+.next-tab {
+  position: fixed;
+  z-index: 5;
+  bottom: -64px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 160px;
+  height: 56px;
+  border-radius: 14px 14px 0 0;
+  background: var(--tab-bg);
+  backdrop-filter: blur(8px);
+  color: var(--paper);
+  text-decoration: none;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 8px;
+  cursor: pointer;
+  transition: bottom 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.next-tab.visible { bottom: 0; }
+.next-tab .chevron {
+  font-size: 14px;
+  opacity: 0.8;
+}
+/* Only animate while shown — this tab also carries backdrop-filter, and an
+   animating child inside a backdrop-filter element forces the browser to
+   recompute that blur every frame, same as the drop-shadow-over-animating-
+   content cost already fixed elsewhere on this page. No point paying that
+   continuously while the tab sits off-screen, unseen, most of the time. */
+.next-tab.visible .chevron {
+  animation: bob 1.8s ease-in-out infinite;
+}

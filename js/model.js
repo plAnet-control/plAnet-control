@@ -54,7 +54,7 @@ function resize() {
 }
 
 const loader = new STLLoader();
-loader.load('./A_sketch_no_holes.stl', (geometry) => {
+loader.load('../A_sketch_no_holes.stl', (geometry) => {
   // Model's extrusion (thin) axis came in along X, height along Z, width along Y.
   // Rotate so width->X, height->Y, depth->Z, matching three.js's Y-up/Z-forward convention.
   geometry.rotateX(-Math.PI / 2);
@@ -97,12 +97,23 @@ loader.load('./A_sketch_no_holes.stl', (geometry) => {
 window.addEventListener('resize', resize);
 
 const clock = new THREE.Clock();
+
+// Capped to ~30fps instead of the display's native rate (often 60fps+) —
+// the rotation is slow enough that the extra frames aren't visible, but
+// halving the render calls meaningfully cuts this page's ongoing GPU cost.
+const TARGET_FPS = 30;
+const FRAME_INTERVAL = 1 / TARGET_FPS;
+let accumulator = 0;
+
 function animate() {
   requestAnimationFrame(animate);
-  const delta = clock.getDelta();
+  accumulator += clock.getDelta();
+  if (accumulator < FRAME_INTERVAL) return;
+
   if (mesh) {
     // Reversed spin direction, per request — always rotates, never flickers.
-    mesh.rotation.y -= delta * 0.35;
+    mesh.rotation.y -= accumulator * 0.35;
   }
   renderer.render(scene, camera);
+  accumulator = 0;
 }
